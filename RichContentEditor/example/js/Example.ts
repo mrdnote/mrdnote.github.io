@@ -14,13 +14,16 @@ class Editor
         const options: RichContentEditorOptions =
         {
             Language: 'EN',
-            UploadUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Upload',
-            FileListUrl: 'https://dnote.azurewebsites.net/api/EditorApi/FileList',
+            UploadUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Secret98734234Upload',
+            FileListUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Secret98734234FileList',
             GridFramework: framework,
-            Editors: this.getEditors()
+            Editors: this.getEditors(),
+            OnClose: this.handleClose,
+            OnSave: this.handleSave
         };
 
         let rce = this.instantiateMainEditor(options);
+        rce.GetEditor("RichContentTableEditor").RegisterCssClasses(['red', 'green', 'yellow']);
 
         const options2: RichContentEditorOptions =
         {
@@ -61,11 +64,27 @@ class Editor
                 (window as any).M.textareaAutoResize($('#ExportTextArea'));
             }
         });
+
+        $('#ContentEditButton').click(function ()
+        {
+            $(this).addClass('rce-hide');
+            rce = _this.instantiateMainEditor(options);
+        });
+    }
+
+    private handleClose()
+    {
+        $('#ContentEditButton').removeClass('rce-hide');
+    }
+
+    private handleSave()
+    {
+        $('#ContentEditButton').removeClass('rce-hide');
     }
 
     private getEditors(): string[]
     {
-        const editors: string[] = ['RichContentTextEditor'];
+        const editors: string[] = ['RichContentTextEditor', 'RichContentHeadingEditor', 'RichContentFontAwesomeIconEditor', 'RichContentLinkEditor'];
 
         if ($('#ImageCheckBox').prop('checked'))
         {
@@ -83,10 +102,6 @@ class Editor
     private instantiateMainEditor(options: RichContentEditorOptions)
     {
         const editor = new RichContentEditor().Init('RichContentEditorCanvas', options);
-        const imageEditor = editor.GetEditor('RichContentImageEditor') as RichContentImageEditor;
-        imageEditor.InsertImage('https://dnoteweb.blob.core.windows.net:443/editor-uploads/Dnote%20Logo%20400px.png', ImageAlignment.Right);
-        const textEditor = editor.GetEditor('RichContentTextEditor') as RichContentTextEditor;
-        textEditor.InsertContent('<b>Welcome to DNote\'s HTML Editor.</b><div>Start by clicking the "plus"-icon below...</div>');
         return editor;
     }
 }

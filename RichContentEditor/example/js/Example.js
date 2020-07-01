@@ -9,12 +9,15 @@ var Editor = /** @class */ (function () {
         }
         var options = {
             Language: 'EN',
-            UploadUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Upload',
-            FileListUrl: 'https://dnote.azurewebsites.net/api/EditorApi/FileList',
+            UploadUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Secret98734234Upload',
+            FileListUrl: 'https://dnote.azurewebsites.net/api/EditorApi/Secret98734234FileList',
             GridFramework: framework,
-            Editors: this.getEditors()
+            Editors: this.getEditors(),
+            OnClose: this.handleClose,
+            OnSave: this.handleSave
         };
         var rce = this.instantiateMainEditor(options);
+        rce.GetEditor("RichContentTableEditor").RegisterCssClasses(['red', 'green', 'yellow']);
         var options2 = {
             Language: 'EN',
             GridFramework: framework
@@ -43,9 +46,19 @@ var Editor = /** @class */ (function () {
                 window.M.textareaAutoResize($('#ExportTextArea'));
             }
         });
+        $('#ContentEditButton').click(function () {
+            $(this).addClass('rce-hide');
+            rce = _this.instantiateMainEditor(options);
+        });
+    };
+    Editor.prototype.handleClose = function () {
+        $('#ContentEditButton').removeClass('rce-hide');
+    };
+    Editor.prototype.handleSave = function () {
+        $('#ContentEditButton').removeClass('rce-hide');
     };
     Editor.prototype.getEditors = function () {
-        var editors = ['RichContentTextEditor'];
+        var editors = ['RichContentTextEditor', 'RichContentHeadingEditor', 'RichContentFontAwesomeIconEditor', 'RichContentLinkEditor'];
         if ($('#ImageCheckBox').prop('checked')) {
             editors.push('RichContentImageEditor');
         }
@@ -56,10 +69,6 @@ var Editor = /** @class */ (function () {
     };
     Editor.prototype.instantiateMainEditor = function (options) {
         var editor = new RichContentEditor().Init('RichContentEditorCanvas', options);
-        var imageEditor = editor.GetEditor('RichContentImageEditor');
-        imageEditor.InsertImage('https://dnoteweb.blob.core.windows.net:443/editor-uploads/Dnote%20Logo%20400px.png', ImageAlignment.Right);
-        var textEditor = editor.GetEditor('RichContentTextEditor');
-        textEditor.InsertContent('<b>Welcome to DNote\'s HTML Editor.</b><div>Start by clicking the "plus"-icon below...</div>');
         return editor;
     };
     return Editor;
