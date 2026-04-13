@@ -45,7 +45,7 @@ function goStep2() {
     <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
 
     <div class="flex justify-end">
-      <button onclick="getToken()" class="bg-blue-600 text-white p-2 rounded">Next</button>
+      <button id="nextBtn" onclick="getToken()" class="bg-blue-600 text-white p-2 rounded">Next</button>
     </div>
   </div>
 
@@ -72,7 +72,7 @@ function goStep2() {
 
     <div class="flex justify-between">
       <button type="button" onclick="goStep1()" class="bg-gray-400 text-white p-2 rounded">Back</button>
-      <button onclick="register()" class="bg-green-600 text-white p-2 rounded">Submit</button>
+      <button id="submitBtn" onclick="register()" class="bg-green-600 text-white p-2 rounded">Submit</button>
     </div>
   </div>
 
@@ -107,36 +107,21 @@ window.onload = () => {
 };
 
 async function getToken() {
+  const btn = document.getElementById('nextBtn');
+  btn.disabled = true;
   document.getElementById('error').innerText = '';
 
   baseUrl = document.getElementById('env').value;
   const user = document.getElementById('apiUser').value;
   const pass = document.getElementById('apiPass').value;
 
-  if (!baseUrl) return showError('Please select an environment');
-
-  const basic = btoa(`${user}:${pass}`);
-
-  try {
-    const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
-      headers: { Authorization: `Basic ${basic}` }
-    });
-
-    const text = await res.text();
-
-    if (!text.startsWith('http')) {
-      return showError('Invalid response from server');
-    }
-
-    const url = new URL(text);
-    token = url.searchParams.get('Token');
-
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-  } catch (e) {
-    showError(e.message);
+  if (!baseUrl) {
+    btn.disabled = false;
+    return showError('Please select an environment');
   }
-}:${pass}`);
+
+  const basic = btoa(`${user}
+:${pass}`);
 
   try {
     const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
@@ -151,14 +136,21 @@ async function getToken() {
     document.getElementById('step2').classList.remove('hidden');
   } catch (e) {
     showError(e.message);
+  } finally {
+    btn.disabled = false;
   }
 }
 
 async function register() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
   const password = document.getElementById('password').value;
   const confirm = document.getElementById('passwordConfirm').value;
 
-  if (password !== confirm) return showError('Passwords do not match');
+  if (password !== confirm) {
+    btn.disabled = false;
+    return showError('Passwords do not match');
+  }
 
   const payload = {
     login: {
@@ -194,6 +186,8 @@ async function register() {
 
   } catch (e) {
     showError(e.message);
+  } finally {
+    btn.disabled = false;
   }
 }
 
