@@ -15,6 +15,20 @@ function goStep2() {
   document.getElementById('error').innerText = '';
 }
 
+function goStep1() {
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('error').innerText = '';
+}
+
+function goStep2() {
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('error').innerText = '';
+}
+
 </script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -39,7 +53,9 @@ function goStep2() {
     <input id="apiUser" placeholder="API Username" class="w-full p-2 border rounded mb-2" />
     <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
 
-    <button onclick="getToken()" class="w-full bg-blue-600 text-white p-2 rounded">Next</button>
+    <div class="flex justify-end">
+      <button onclick="getToken()" class="bg-blue-600 text-white p-2 rounded">Next</button>
+    </div>
   </div>
 
   <!-- STEP 2 -->
@@ -63,9 +79,9 @@ function goStep2() {
       <select id="country" class="w-full p-2 border rounded"></select>
     </div>
 
-    <div class="flex gap-2">
-      <button onclick="register()" class="flex-1 bg-green-600 text-white p-2 rounded">Submit</button>
-      <button type="button" onclick="goStep1()" class="flex-1 bg-gray-400 text-white p-2 rounded">Back</button>
+    <div class="flex justify-between">
+      <button type="button" onclick="goStep1()" class="bg-gray-400 text-white p-2 rounded">Back</button>
+      <button onclick="register()" class="bg-green-600 text-white p-2 rounded">Submit</button>
     </div>
   </div>
 
