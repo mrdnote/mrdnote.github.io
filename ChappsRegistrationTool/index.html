@@ -168,7 +168,8 @@ async function register() {
   btn.disabled = true;
   const password = document.getElementById('password').value;
   const confirm = document.getElementById('passwordConfirm').value;
-
+  const baseUrl = document.getElementById('env').value;
+  
   if (password !== confirm) {
     btn.disabled = false;
     return showError('Passwords do not match');
