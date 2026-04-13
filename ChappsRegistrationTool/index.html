@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Registration Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-xl">
+
+  <h1 class="text-xl font-semibold mb-2">Partner Registration</h1>
+
+  <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">
+    ⚠️ Note: This preview environment blocks external API calls due to Content Security Policy (CSP). 
+    Deploy to GitHub Pages / your domain to test real API requests.
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <h2 class="font-medium mb-3">Step 1: Get Token</h2>
+
+    <select id="env" class="w-full p-2 border rounded mb-3">
+      <option value="https://rental.chapps.test">Local</option>
+      <option value="https://rental-dev.chapps.com">Development</option>
+      <option value="https://rental-sta.chapps.com">Staging</option>
+      <option value="https://rental.chapps.com">Production</option>
+    </select>
+
+    <input id="apiUser" placeholder="API Username" class="w-full p-2 border rounded mb-2" />
+    <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
+
+    <button onclick="getToken()" class="w-full bg-blue-600 text-white p-2 rounded">Next</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="hidden">
+    <h2 class="font-medium mb-3">Step 2: Register</h2>
+
+    <input id="username" placeholder="Email" class="w-full p-2 border rounded mb-2" />
+    <input id="password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-2" />
+    <input id="passwordConfirm" type="password" placeholder="Confirm Password" class="w-full p-2 border rounded mb-2" />
+    <input id="firstName" placeholder="First Name" class="w-full p-2 border rounded mb-2" />
+    <input id="lastName" placeholder="Last Name" class="w-full p-2 border rounded mb-2" />
+    <input id="businessName" placeholder="Business Name" class="w-full p-2 border rounded mb-4" />
+
+    <div class="flex gap-2 mb-4">
+      <select id="language" class="flex-1 p-2 border rounded"></select>
+      <select id="country" class="flex-1 p-2 border rounded"></select>
+    </div>
+
+    <button onclick="register()" class="w-full bg-green-600 text-white p-2 rounded">Submit</button>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" class="hidden">
+    <h2 class="font-medium mb-3">Result</h2>
+    <div id="result" class="p-3 bg-gray-100 rounded"></div>
+  </div>
+
+  <div id="error" class="text-red-500 mt-4"></div>
+
+</div>
+
+<script>
+let baseUrl = "";
+let token = "";
+
+const languages = `AA,AB,AE,AF,AK,AM,AN,AR,AS,AV,AY,AZ,BA,BE,BG,BH,BI,BM,BN,BO,BR,BS,CA,CE,CH,CO,CR,CS,CU,CV,CY,DA,DE,DV,DZ,EE,EL,EN,EO,ES,ET,EU,FA,FF,FI,FJ,FO,FR,FY,GA,GD,GL,GN,GU,GV,HA,HE,HI,HO,HR,HT,HU,HY,HZ,IA,ID,IE,IG,II,IK,IO,IS,IT,IU,JA,JV,KA,KG,KI,KJ,KK,KL,KM,KN,KO,KR,KS,KU,KV,KW,KY,LA,LB,LG,LI,LN,LO,LT,LU,LV,MG,MH,MI,MK,ML,MN,MR,MS,MT,MY,NA,NB,ND,NE,NG,NL,NN,NO,NR,NV,NY,OC,OJ,OM,OR,OS,PA,PI,PL,PS,PT,QU,RM,RN,RO,RU,RW,SA,SC,SD,SE,SG,SH,SI,SK,SL,SM,SN,SO,SQ,SR,SS,ST,SU,SV,SW,TA,TE,TG,TH,TI,TK,TL,TN,TO,TR,TS,TT,TW,TY,UG,UK,UR,UZ,VE,VI,VO,WA,WO,XH,YI,YO,ZA,ZH`.split(',');
+
+const countries = `AD,AE,AF,AG,AI,AL,AM,AO,AQ,AR,AS,AT,AU,AW,AX,AZ,BA,BB,BD,BE,BF,BG,BH,BI,BJ,BL,BM,BN,BO,BQ,BR,BS,BT,BV,BW,BY,BZ,CA,CC,CD,CF,CG,CH,CI,CK,CL,CM,CN,CO,CR,CU,CV,CW,CX,CY,CZ,DE,DJ,DK,DM,DO,DZ,EC,EE,EG,EH,ER,ES,ET,FI,FJ,FK,FM,FO,FR,GA,GB,GD,GE,GF,GG,GH,GI,GL,GM,GN,GP,GQ,GR,GS,GT,GU,GW,GY,HK,HM,HN,HR,HT,HU,ID,IE,IL,IM,IN,IO,IQ,IR,IS,IT,JE,JM,JO,JP,KE,KG,KH,KI,KM,KN,KP,KR,KW,KY,KZ,LA,LB,LC,LI,LK,LR,LS,LT,LU,LV,LY,MA,MC,MD,ME,MF,MG,MH,MK,ML,MM,MN,MO,MP,MQ,MR,MS,MT,MU,MV,MW,MX,MY,MZ,NA,NC,NE,NF,NG,NI,NL,NO,NP,NR,NU,NZ,OM,PA,PE,PF,PG,PH,PK,PL,PM,PN,PR,PS,PT,PW,PY,QA,RE,RO,RS,RU,RW,SA,SB,SC,SD,SE,SG,SH,SI,SJ,SK,SL,SM,SN,SO,SR,SS,ST,SV,SX,SY,SZ,TC,TD,TF,TG,TH,TJ,TK,TL,TM,TN,TO,TR,TT,TV,TW,TZ,UA,UG,UM,US,UY,UZ,VA,VC,VE,VG,VI,VN,VU,WF,WS,YE,YT,ZA,ZM,ZW`.split(',');
+
+window.onload = () => {
+  const lang = document.getElementById('language');
+  const country = document.getElementById('country');
+
+  languages.forEach((l, i) => lang.add(new Option(l, i)));
+  countries.forEach((c, i) => country.add(new Option(c, i)));
+
+  lang.value = 115;
+  country.value = 165;
+};
+
+async function getToken() {
+  baseUrl = document.getElementById('env').value;
+  const user = document.getElementById('apiUser').value;
+  const pass = document.getElementById('apiPass').value;
+
+  const basic = btoa(`${user}:${pass}`);
+
+  try {
+    const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
+      headers: { Authorization: `Basic ${basic}` }
+    });
+
+    const text = await res.text();
+    const url = new URL(text);
+    token = url.searchParams.get('Token');
+
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function register() {
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('passwordConfirm').value;
+
+  if (password !== confirm) return showError('Passwords do not match');
+
+  const payload = {
+    login: {
+      username: document.getElementById('username').value,
+      password,
+      passwordConfirm: confirm,
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      businessName: document.getElementById('businessName').value,
+      language: parseInt(document.getElementById('language').value),
+      country: parseInt(document.getElementById('country').value)
+    },
+    token,
+    partnerName: null
+  };
+
+  try {
+    const res = await fetch(`${baseUrl}/partner/account/doregister`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.remove('hidden');
+
+    document.getElementById('result').innerText =
+      data.status === 'error'
+        ? data.error
+        : `Email sent to ${data.email}. Please complete registration.`;
+
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('error').innerText = msg;
+}
+</script>
+
+</body>
+</html>
