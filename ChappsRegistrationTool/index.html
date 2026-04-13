@@ -2,8 +2,20 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Registration Tool</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Chapps Rental Registration</title>
+  <script src="https://cdn.tailwindcss.com">function goStep1() {
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('error').innerText = '';
+}
+
+function goStep2() {
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('error').innerText = '';
+}
+
+</script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
@@ -41,18 +53,27 @@
     <input id="lastName" placeholder="Last Name" class="w-full p-2 border rounded mb-2" />
     <input id="businessName" placeholder="Business Name" class="w-full p-2 border rounded mb-4" />
 
-    <div class="flex gap-2 mb-4">
-      <select id="language" class="flex-1 p-2 border rounded"></select>
-      <select id="country" class="flex-1 p-2 border rounded"></select>
+    <div class="mb-2">
+      <label class="block text-sm font-medium mb-1">Language</label>
+      <select id="language" class="w-full p-2 border rounded"></select>
     </div>
 
-    <button onclick="register()" class="w-full bg-green-600 text-white p-2 rounded">Submit</button>
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Country</label>
+      <select id="country" class="w-full p-2 border rounded"></select>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="register()" class="flex-1 bg-green-600 text-white p-2 rounded">Submit</button>
+      <button type="button" onclick="goStep1()" class="flex-1 bg-gray-400 text-white p-2 rounded">Back</button>
+    </div>
   </div>
 
   <!-- STEP 3 -->
   <div id="step3" class="hidden">
     <h2 class="font-medium mb-3">Result</h2>
     <div id="result" class="p-3 bg-gray-100 rounded"></div>
+    <button type="button" onclick="goStep2()" class="mt-4 w-full bg-gray-400 text-white p-2 rounded">Back</button>
   </div>
 
   <div id="error" class="text-red-500 mt-4"></div>
