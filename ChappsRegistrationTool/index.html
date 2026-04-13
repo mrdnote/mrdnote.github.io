@@ -45,7 +45,7 @@ function goStep2() {
     <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
 
     <div class="flex justify-end">
-      <button id="nextBtn" onclick="getToken()" class="bg-blue-600 text-white p-2 rounded">Next</button>
+      <button id="nextBtn" onclick="getToken()" class="bg-blue-600 text-white p-2 rounded disabled:opacity-50">Next</button>
     </div>
   </div>
 
@@ -72,7 +72,7 @@ function goStep2() {
 
     <div class="flex justify-between">
       <button type="button" onclick="goStep1()" class="bg-gray-400 text-white p-2 rounded">Back</button>
-      <button id="submitBtn" onclick="register()" class="bg-green-600 text-white p-2 rounded">Submit</button>
+      <button id="submitBtn" onclick="register()" class="bg-green-600 text-white p-2 rounded disabled:opacity-50">Submit</button>
     </div>
   </div>
 
@@ -120,6 +120,8 @@ async function getToken() {
 
   const basic = btoa(`${user}:${pass}`);
 
+  const btn = document.getElementById('nextBtn');
+  btn.disabled = true;
   try {
     const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
       headers: { Authorization: `Basic ${basic}` }
@@ -151,30 +153,12 @@ async function getToken() {
 
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
-
   } catch (e) {
     showError('Something went wrong. Please try again.');
     console.error(e);
   }
-}
-
-  const basic = btoa(`${user}
-:${pass}`);
-
-  try {
-    const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
-      headers: { Authorization: `Basic ${basic}` }
-    });
-
-    const text = await res.text();
-    const url = new URL(text);
-    token = url.searchParams.get('Token');
-
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-  } catch (e) {
-    showError(e.message);
-  } finally {
+  finally
+  {      
     btn.disabled = false;
   }
 }
