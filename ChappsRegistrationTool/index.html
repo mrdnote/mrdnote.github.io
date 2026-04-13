@@ -107,18 +107,56 @@ window.onload = () => {
 };
 
 async function getToken() {
-  const btn = document.getElementById('nextBtn');
-  btn.disabled = true;
+  // clean version (deduplicated)
   document.getElementById('error').innerText = '';
 
-  baseUrl = document.getElementById('env').value;
+  const baseUrl = document.getElementById('env').value;
   const user = document.getElementById('apiUser').value;
   const pass = document.getElementById('apiPass').value;
 
   if (!baseUrl) {
-    btn.disabled = false;
     return showError('Please select an environment');
   }
+
+  const basic = btoa(`${user}:${pass}`);
+
+  try {
+    const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
+      headers: { Authorization: `Basic ${basic}` }
+    });
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        return showError('Invalid API credentials');
+      }
+      return showError(`Request failed (${res.status})`);
+    }
+
+    const text = await res.text();
+
+    let url;
+    try {
+      url = new URL(text);
+    } catch {
+      return showError('Invalid response from server');
+    }
+
+    const tokenValue = url.searchParams.get('Token');
+
+    if (!tokenValue) {
+      return showError('Token not found in response');
+    }
+
+    token = tokenValue;
+
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+
+  } catch (e) {
+    showError('Something went wrong. Please try again.');
+    console.error(e);
+  }
+}
 
   const basic = btoa(`${user}
 :${pass}`);
