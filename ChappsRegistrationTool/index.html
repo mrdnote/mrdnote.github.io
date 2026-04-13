@@ -3,18 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>Chapps Rental Registration</title>
-  <script src="https://cdn.tailwindcss.com">function goStep1() {
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step1').classList.remove('hidden');
-  document.getElementById('error').innerText = '';
-}
+  <script src="https://cdn.tailwindcss.com"></script>
 
-function goStep2() {
-  document.getElementById('step3').classList.add('hidden');
-  document.getElementById('step2').classList.remove('hidden');
-  document.getElementById('error').innerText = '';
-}
-
+<script>
 function goStep1() {
   document.getElementById('step2').classList.add('hidden');
   document.getElementById('step3').classList.add('hidden');
@@ -28,7 +19,6 @@ function goStep2() {
   document.getElementById('step2').classList.remove('hidden');
   document.getElementById('error').innerText = '';
 }
-
 </script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
