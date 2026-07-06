@@ -28,38 +28,26 @@ function goStep2() {
 
   <h1 class="text-xl font-semibold mb-2">Chapps Rental Registration</h1>
 
-  
-
-  <!-- STEP 1 -->
-  <div id="step1">
-    <h2 class="font-medium mb-3">Step 1: Get Token</h2>
+  <!-- STEP 2 -->
+  <div id="step2">
+    <h2 class="font-medium mb-3">Step 1: Register</h2>
 
     <select id="env" class="w-full p-2 border rounded mb-3">
       <option value="" disabled selected>Select environment</option>
-      <option value="https://rental.chapps.test">Local</option>
-      <option value="https://rental-dev.chapps.com">Development</option>
-      <option value="https://rental-sta.chapps.com">Staging</option>
-      <option value="https://rental.chapps.com">Production</option>
+      <option value="https://rental.chapps.test,https://api-admin.chapps.test">Local</option>
+      <option value="https://rental-dev.chapps.com,https://api-admin-dev.chapps.com">Development</option>
+      <option value="https://rental-sta.chapps.com,https://api-admin-sta.chapps.com">Staging</option>
+      <option value="https://rental.chapps.com,https://api-admin.chapps.com">Production</option>
     </select>
 
     <input id="apiUser" placeholder="API Username" class="w-full p-2 border rounded mb-2" />
     <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
-
-    <div class="flex justify-end">
-      <button id="nextBtn" onclick="getToken()" class="bg-blue-600 text-white p-2 rounded disabled:opacity-50">Next</button>
-    </div>
-  </div>
-
-  <!-- STEP 2 -->
-  <div id="step2" class="hidden">
-    <h2 class="font-medium mb-3">Step 2: Register</h2>
-
-    <input id="username" placeholder="Email" class="w-full p-2 border rounded mb-2" />
-    <input id="password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-2" />
-    <input id="passwordConfirm" type="password" placeholder="Confirm Password" class="w-full p-2 border rounded mb-2" />
+    <input id="apiToken" placeholder="API Token" class="w-full p-2 border rounded mb-4" />
     <input id="firstName" placeholder="First Name" class="w-full p-2 border rounded mb-2" />
     <input id="lastName" placeholder="Last Name" class="w-full p-2 border rounded mb-2" />
+    <input id="email" placeholder="Email" class="w-full p-2 border rounded mb-2" />
     <input id="businessName" placeholder="Business Name" class="w-full p-2 border rounded mb-4" />
+    <input id="businessEmail" placeholder="Business Email" class="w-full p-2 border rounded mb-4" />
 
     <div class="mb-2">
       <label class="block text-sm font-medium mb-1">Language</label>
@@ -89,7 +77,6 @@ function goStep2() {
 </div>
 
 <script>
-let baseUrl = "";
 let token = "";
 
 const languages = `AA,AB,AE,AF,AK,AM,AN,AR,AS,AV,AY,AZ,BA,BE,BG,BH,BI,BM,BN,BO,BR,BS,CA,CE,CH,CO,CR,CS,CU,CV,CY,DA,DE,DV,DZ,EE,EL,EN,EO,ES,ET,EU,FA,FF,FI,FJ,FO,FR,FY,GA,GD,GL,GN,GU,GV,HA,HE,HI,HO,HR,HT,HU,HY,HZ,IA,ID,IE,IG,II,IK,IO,IS,IT,IU,JA,JV,KA,KG,KI,KJ,KK,KL,KM,KN,KO,KR,KS,KU,KV,KW,KY,LA,LB,LG,LI,LN,LO,LT,LU,LV,MG,MH,MI,MK,ML,MN,MR,MS,MT,MY,NA,NB,ND,NE,NG,NL,NN,NO,NR,NV,NY,OC,OJ,OM,OR,OS,PA,PI,PL,PS,PT,QU,RM,RN,RO,RU,RW,SA,SC,SD,SE,SG,SH,SI,SK,SL,SM,SN,SO,SQ,SR,SS,ST,SU,SV,SW,TA,TE,TG,TH,TI,TK,TL,TN,TO,TR,TS,TT,TW,TY,UG,UK,UR,UZ,VE,VI,VO,WA,WO,XH,YI,YO,ZA,ZH`.split(',');
@@ -107,107 +94,47 @@ window.onload = () => {
   country.value = 165;
 };
 
-async function getToken() {
-  // clean version (deduplicated)
-  document.getElementById('error').innerText = '';
-
-  const baseUrl = document.getElementById('env').value;
-  const user = document.getElementById('apiUser').value;
-  const pass = document.getElementById('apiPass').value;
-
-  if (!baseUrl) {
-    return showError('Please select an environment');
-  }
-
-  const basic = btoa(`${user}:${pass}`);
-
-  const btn = document.getElementById('nextBtn');
-  btn.disabled = true;
-  try {
-    const res = await fetch(`${baseUrl}/partner/account/gettoken`, {
-      headers: { Authorization: `Basic ${basic}` }
-    });
-
-    if (!res.ok) {
-      if (res.status === 401) {
-        return showError('Invalid API credentials');
-      }
-      return showError(`Request failed (${res.status})`);
-    }
-
-    const text = await res.text();
-
-    let url;
-    try {
-      url = new URL(text);
-    } catch {
-      return showError('Invalid response from server');
-    }
-
-    const tokenValue = url.searchParams.get('Token');
-
-    if (!tokenValue) {
-      return showError('Token not found in response');
-    }
-
-    token = tokenValue;
-
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-  } catch (e) {
-    showError('Something went wrong. Please try again.');
-    console.error(e);
-  }
-  finally
-  {      
-    btn.disabled = false;
-  }
-}
-
 async function register() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  const password = document.getElementById('password').value;
-  const confirm = document.getElementById('passwordConfirm').value;
-  const baseUrl = document.getElementById('env').value;
-  
-  if (password !== confirm) {
-    btn.disabled = false;
-    return showError('Passwords do not match');
+  const baseUrls = document.getElementById('env').value;
+  const baseUrlRental = baseUrls.split(',')[0];
+  const baseUrlAdmin  = baseUrls.split(',')[1];
+  const user = document.getElementById('apiUser').value;
+  const pass = document.getElementById('apiPass').value;
+  const token = document.getElementById('apiToken').value;
+  const basic = btoa(`${user}:${pass}`);
+
+  if (!baseUrls) {
+    return showError('Please select an environment');
   }
 
   const payload = {
-    login: {
-      username: document.getElementById('username').value,
-      password,
-      passwordConfirm: confirm,
-      firstName: document.getElementById('firstName').value,
-      lastName: document.getElementById('lastName').value,
-      businessName: document.getElementById('businessName').value,
-      language: parseInt(document.getElementById('language').value),
-      country: parseInt(document.getElementById('country').value)
-    },
-    token,
-    partnerName: null
+      FirstName: document.getElementById('firstName').value,
+      LastName: document.getElementById('lastName').value,
+      ContactEmail: document.getElementById('email').value,
+      BusinessName: document.getElementById('businessName').value,
+      BusinessEmail: document.getElementById('businessEmail').value,
+      Language: 'NL', //parseInt(document.getElementById('language').value),
+      Country: 'NL', //parseInt(document.getElementById('country').value),
+      ProductIds: [1]
   };
 
   try {
-    const res = await fetch(`${baseUrl}/partner/account/doregister`, {
+    const res = await fetch(`${baseUrlAdmin}/testaccount`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',  'Authorization': `Basic ${basic}`, 'X-LoginToken': token },
       body: JSON.stringify(payload)
     });
 
     const data = await res.json();
+    
+    console.log(data);
 
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
 
-    document.getElementById('result').innerText =
-      data.status === 'error'
-        ? data.error
-        : `Email sent to ${data.email}. Please complete registration.`;
-
+    document.getElementById('result').innerText = data.message;
   } catch (e) {
     showError(e.message);
   } finally {
