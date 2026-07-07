@@ -40,6 +40,15 @@ function goStep2() {
       <option value="https://rental.chapps.com,https://api-admin.chapps.com">Production</option>
     </select>
 
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Product</label>
+      <select id="product" class="w-full p-2 border rounded">
+        <option value="" selected disabled>Select a product</option>
+        <option value="1" selected>RentalPro</option>
+        <option value="4">BuildingPro</option>
+      </select>
+    </div>
+    
     <input id="apiUser" placeholder="API Username" class="w-full p-2 border rounded mb-2" />
     <input id="apiPass" type="password" placeholder="API Password" class="w-full p-2 border rounded mb-4" />
     <input id="apiToken" placeholder="API Token" class="w-full p-2 border rounded mb-4" />
@@ -87,11 +96,11 @@ window.onload = () => {
   const lang = document.getElementById('language');
   const country = document.getElementById('country');
 
-  languages.forEach((l, i) => lang.add(new Option(l, i)));
-  countries.forEach((c, i) => country.add(new Option(c, i)));
+  languages.forEach((l, i) => lang.add(new Option(l, l)));
+  countries.forEach((c, i) => country.add(new Option(c, c)));
 
-  lang.value = 115;
-  country.value = 165;
+  lang.value = 'NL';
+  country.value = 'NL';
 };
 
 async function register() {
@@ -100,6 +109,7 @@ async function register() {
   const baseUrls = document.getElementById('env').value;
   const baseUrlRental = baseUrls.split(',')[0];
   const baseUrlAdmin  = baseUrls.split(',')[1];
+  const productId = document.getElementById('product').value;
   const user = document.getElementById('apiUser').value;
   const pass = document.getElementById('apiPass').value;
   const token = document.getElementById('apiToken').value;
@@ -109,15 +119,19 @@ async function register() {
     return showError('Please select an environment');
   }
 
+  if (!productId) {
+    return showError('Please select a product');
+  }
+  
   const payload = {
       FirstName: document.getElementById('firstName').value,
       LastName: document.getElementById('lastName').value,
       ContactEmail: document.getElementById('email').value,
       BusinessName: document.getElementById('businessName').value,
       BusinessEmail: document.getElementById('businessEmail').value,
-      Language: 'NL', //parseInt(document.getElementById('language').value),
-      Country: 'NL', //parseInt(document.getElementById('country').value),
-      ProductIds: [1]
+      Language: document.getElementById('language').value,
+      Country: document.getElementById('country').value,
+      ProductIds: [parseInt(productId)]
   };
 
   try {
