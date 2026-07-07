@@ -127,6 +127,10 @@ async function register() {
       body: JSON.stringify(payload)
     });
 
+    if (!res.ok) {
+      return showError(data.message || `Request failed (${res.status})`);
+    }
+    
     const data = await res.json();
     
     console.log(data);
@@ -134,7 +138,7 @@ async function register() {
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
 
-    document.getElementById('result').innerText = data.message;
+    showResult(data.message);
   } catch (e) {
     showError(e.message);
   } finally {
@@ -142,6 +146,10 @@ async function register() {
   }
 }
 
+function showResult(msg) {
+  document.getElementById('result').innerText = data.message;
+}
+  
 function showError(msg) {
   document.getElementById('error').innerText = msg;
 }
