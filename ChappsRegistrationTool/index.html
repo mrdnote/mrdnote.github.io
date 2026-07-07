@@ -6,15 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
 <script>
-function goStep1() {
-  document.getElementById('step2').classList.add('hidden');
-  document.getElementById('step3').classList.add('hidden');
-  document.getElementById('step1').classList.remove('hidden');
-  document.getElementById('error').innerText = '';
-}
-
 function goStep2() {
-  document.getElementById('step1').classList.add('hidden');
   document.getElementById('step3').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
   document.getElementById('error').innerText = '';
@@ -69,7 +61,6 @@ function goStep2() {
     </div>
 
     <div class="flex justify-between">
-      <button type="button" onclick="goStep1()" class="bg-gray-400 text-white p-2 rounded">Back</button>
       <button id="submitBtn" onclick="register()" class="bg-green-600 text-white p-2 rounded disabled:opacity-50">Submit</button>
     </div>
   </div>
