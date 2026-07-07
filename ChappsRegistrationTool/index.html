@@ -127,14 +127,13 @@ async function register() {
       body: JSON.stringify(payload)
     });
 
+    const data = await res.json();
+    console.log(data);
+
     if (!res.ok) {
       return showError(data.message || `Request failed (${res.status})`);
     }
     
-    const data = await res.json();
-    
-    console.log(data);
-
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
 
