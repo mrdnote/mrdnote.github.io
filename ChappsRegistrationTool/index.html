@@ -158,12 +158,12 @@ async function register() {
 
 function showResult(msg) {
   document.getElementById('result').innerText = msg;
-  showError('');
+  document.getElementById('error').innerText = '';
 }
   
 function showError(msg) {
   document.getElementById('error').innerText = msg;
-  showResult('');
+  document.getElementById('result').innerText = '';
 }
 </script>
 
