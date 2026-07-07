@@ -167,10 +167,12 @@ async function register() {
 
 function showResult(msg) {
   document.getElementById('result').innerText = msg;
+  showError('');
 }
   
 function showError(msg) {
   document.getElementById('error').innerText = msg;
+  showResult('');
 }
 </script>
 
