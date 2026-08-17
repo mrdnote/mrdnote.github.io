@@ -26,10 +26,10 @@ function goStep2() {
 
     <select id="env" class="w-full p-2 border rounded mb-3">
       <option value="" disabled selected>Select environment</option>
-      <option value="https://rental.chapps.test,https://api-admin.chapps.test">Local</option>
-      <option value="https://rental-dev.chapps.com,https://api-admin-dev.chapps.com">Development</option>
-      <option value="https://rental-sta.chapps.com,https://api-admin-sta.chapps.com">Staging</option>
-      <option value="https://rental.chapps.com,https://api-admin.chapps.com">Production</option>
+      <option value="https://api-admin.chapps.test">Local</option>
+      <option value="https://api-admin-dev.chapps.com">Development</option>
+      <option value="https://api-admin-sta.chapps.com">Staging</option>
+      <option value="https://api-admin.chapps.com">Production</option>
     </select>
 
     <div class="mb-4">
@@ -94,9 +94,7 @@ window.onload = () => {
 
 async function register() {
   const btn = document.getElementById('submitBtn');
-  const baseUrls = document.getElementById('env').value;
-  const baseUrlRental = baseUrls.split(',')[0];
-  const baseUrlAdmin  = baseUrls.split(',')[1];
+  const baseUrlAdmin = document.getElementById('env').value;
   const productId = document.getElementById('product').value;
   const user = document.getElementById('apiUser').value;
   const pass = document.getElementById('apiPass').value;
